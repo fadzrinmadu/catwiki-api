@@ -44,6 +44,10 @@ const breedSchema = mongoose.Schema({
       type: Number,
     },
   },
+  galleries: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'Gallery',
+  }],
 });
 
 module.exports = mongoose.model('Breed', breedSchema);

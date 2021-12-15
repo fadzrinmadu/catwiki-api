@@ -1,5 +1,6 @@
-const multer = require('multer');
+const express = require('express');
 
 module.exports = (app) => {
-  app.use(multer().array());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 };

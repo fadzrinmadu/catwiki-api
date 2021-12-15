@@ -4,6 +4,7 @@ const ClientError = require('../../exceptions/ClientError');
 exports.postBreedHandler = async (request, response) => {
   try {
     const payload = request.body;
+
     await breedsService.addBreed(payload);
 
     response.status(201);
@@ -34,7 +35,7 @@ exports.getBreedsHandler = async (request, response) => {
   try {
     const { query } = request;
     const breeds = await breedsService.getBreeds(query);
-  
+
     response.status(200);
     return response.json({
       limit: query.limit,
@@ -83,7 +84,7 @@ exports.putBreedByIdHandler = async (request, response) => {
     const payload = request.body;
 
     await breedsService.editBreedById(id, payload);
-    
+
     response.status(204);
     return response.end();
   } catch (error) {
