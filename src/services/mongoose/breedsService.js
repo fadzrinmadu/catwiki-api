@@ -18,7 +18,7 @@ exports.getBreeds = async (query) => {
     .find({ name: { $regex: `${term}`, $options: 'i' } })
     .limit(limit ? parseInt(limit) : 0)
     .skip(startIndex)
-    .select('_id name')
+    .select('_id name');
 
   if (term !== '' && breeds.length < 1) {
     throw new NotFoundError(`Breed dengan kata kunci '${term}' tidak ditemukan`);
@@ -28,55 +28,25 @@ exports.getBreeds = async (query) => {
 };
 
 exports.getBreedById = async (id) => {
-  try {
-    const breed = await Breed.findOne({ _id: id })
-      .select('-__v')
-      .populate({ path: 'galleries', select: '-_id -__v' });
+  const breed = await Breed.findOne({ _id: id })
+    .select('-__v')
+    .populate({ path: 'galleries', select: '-_id -__v' });
 
-    if (!breed) {
-      throw new NotFoundError(`Breed dengan id '${id}' tidak ditemukan`);
-    }
-
-    return breed;
-  } catch (error) {
-    if (error) {
-      throw new NotFoundError(`Breed dengan id '${id}' tidak ditemukan`);
-    }
-  }
+  return breed;
 };
 
 exports.editBreedById = async (id, payload) => {
-  try {
-    const breed = await Breed.findOneAndUpdate(
-      { _id: id },
-      payload,
-      { new: true, runValidators: true },
-    );
+  const breed = await Breed.findOneAndUpdate(
+    { _id: id },
+    payload,
+    { new: true, runValidators: true },
+  );
 
-    if (!breed) {
-      throw new NotFoundError(`Breed dengan id '${id}' tidak ditemukan`);
-    }
-
-    await breed.save();
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      throw error;
-    }
-
-    if (error) {
-      throw new NotFoundError(`Breed dengan id '${id}' tidak ditemukan`);
-    }
-  }
+  await breed.save();
 };
 
 exports.deleteBreedById = async (id) => {
-  try {
-    await Breed.findOneAndDelete({ _id: id });
-  } catch (error) {
-    if (error) {
-      throw new NotFoundError(`Breed dengan id '${id}' tidak ditemukan`);
-    }
-  }
+  await Breed.findOneAndDelete({ _id: id });
 };
 
 exports.findBreedById = async (id) => {

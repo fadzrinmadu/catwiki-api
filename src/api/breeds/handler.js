@@ -59,7 +59,10 @@ exports.getBreedsHandler = async (request, response) => {
 
 exports.getBreedByIdHandler = async (request, response) => {
   try {
-    const breed = await breedsService.getBreedById(request.params.id);
+    const { id } = request.params;
+
+    await breedsService.findBreedById(id);
+    const breed = await breedsService.getBreedById(id);
 
     response.status(200);
     return response.json(breed);
@@ -83,6 +86,7 @@ exports.putBreedByIdHandler = async (request, response) => {
     const { id } = request.params;
     const payload = request.body;
 
+    await breedsService.findBreedById(id);
     await breedsService.editBreedById(id, payload);
 
     response.status(204);
@@ -119,6 +123,8 @@ exports.putBreedByIdHandler = async (request, response) => {
 exports.deleteBreedByIdHandler = async (request, response) => {
   try {
     const { id } = request.params;
+
+    await breedsService.findBreedById(id);
     await breedsService.deleteBreedById(id);
 
     response.status(204);
