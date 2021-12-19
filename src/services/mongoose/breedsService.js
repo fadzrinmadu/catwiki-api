@@ -30,8 +30,8 @@ exports.getBreeds = async (query) => {
 
 exports.getBreedById = async (id) => {
   const breed = await Breed.findOne({ _id: id })
-    .select('-__v')
-    .populate({ path: 'galleries', select: '-_id -__v -count' });
+    .select('-__v -count')
+    .populate({ path: 'galleries', select: '-_id -__v' });
 
   return breed;
 };
