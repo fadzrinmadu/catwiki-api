@@ -48,6 +48,10 @@ const breedSchema = mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Gallery',
   }],
+  count: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model('Breed', breedSchema);

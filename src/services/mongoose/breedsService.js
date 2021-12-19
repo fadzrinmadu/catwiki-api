@@ -9,7 +9,7 @@ exports.addBreed = async (payload) => {
 
 exports.getBreeds = async (query) => {
   const {
-    limit = 4, term = '', page = 1, top = false,
+    limit = 4, term = '', page = 1, top = 'false',
   } = query;
 
   const startIndex = (limit && page) ? (page - 1) * limit : 0;
@@ -18,7 +18,8 @@ exports.getBreeds = async (query) => {
     .find({ name: { $regex: `${term}`, $options: 'i' } })
     .limit(limit ? parseInt(limit) : 0)
     .skip(startIndex)
-    .select('_id name');
+    .sort(`${top === 'true' ? '-count' : 'name'}`)
+    .select(`_id name ${top === 'true' && 'image'}`);
 
   if (term !== '' && breeds.length < 1) {
     throw new NotFoundError(`Breed dengan kata kunci '${term}' tidak ditemukan`);
@@ -30,7 +31,7 @@ exports.getBreeds = async (query) => {
 exports.getBreedById = async (id) => {
   const breed = await Breed.findOne({ _id: id })
     .select('-__v')
-    .populate({ path: 'galleries', select: '-_id -__v' });
+    .populate({ path: 'galleries', select: '-_id -__v -count' });
 
   return breed;
 };
@@ -76,5 +77,11 @@ exports.deleteBreedGalleryById = async (breedId, galleryId) => {
     }
   });
 
+  await breed.save();
+};
+
+exports.updateBreedCount = async (id) => {
+  const breed = await Breed.findOne({ _id: id });
+  breed.count += 1;
   await breed.save();
 };
