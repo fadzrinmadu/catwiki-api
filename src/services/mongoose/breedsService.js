@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Breed = require('../../models/Breed');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const { baseUrl } = require('../../configs/server');
 
 exports.addBreed = async (payload) => {
   const breed = new Breed(payload);
@@ -31,9 +32,16 @@ exports.getBreeds = async (query) => {
 exports.getBreedById = async (id) => {
   const breed = await Breed.findOne({ _id: id })
     .select('-__v -count')
-    .populate({ path: 'galleries', select: '-_id -__v' });
+    .populate({ path: 'galleries', select: '-__v' });
 
-  return breed;
+  return {
+    ...breed._doc,
+    galleries: breed._doc.galleries.map((gallery) => ({
+      _id: gallery._id,
+      name: gallery.name,
+      image: `${baseUrl}/uploads/breeds/${gallery.image}`,
+    })),
+  };
 };
 
 exports.editBreedById = async (id, payload) => {
