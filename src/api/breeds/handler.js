@@ -206,6 +206,14 @@ exports.deleteBreedByIdHandler = async (request, response) => {
     const { id } = request.params;
 
     await breedsService.findBreedById(id);
+
+    const breed = await breedsService.getBreedById(id);
+
+    // delete all galleries
+    breed.galleries.forEach(async (gallery) => {
+      await galleriesService.deleteGalleryById(gallery._id);
+    });
+
     await breedsService.deleteBreedById(id);
 
     response.status(204);
