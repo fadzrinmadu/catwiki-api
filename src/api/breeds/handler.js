@@ -105,7 +105,32 @@ exports.putBreedByIdHandler = async (request, response) => {
     const payload = request.body;
 
     await breedsService.findBreedById(id);
-    await breedsService.editBreedById(id, payload);
+
+    if (request.files.length > 0) {
+      const breed = await breedsService.getBreedById(id);
+
+      // delete old galleries
+      breed.galleries.forEach(async (gallery) => {
+        await galleriesService.deleteGalleryById(gallery._id);
+      });
+
+      const payloadGalleries = payload.galleries.map((gallery, index) => ({
+        name: gallery.name,
+        image: request.files[index].filename,
+      }));
+
+      const galleryIds = await galleriesService.addGalleries(payloadGalleries);
+
+      const payloadBreed = {
+        ...payload,
+        galleries: galleryIds,
+      };
+
+      await breedsService.editBreedById(id, payloadBreed);
+    } else {
+      delete payload.galleries;
+      await breedsService.editBreedById(id, payload);
+    }
 
     response.status(204);
     return response.end();
