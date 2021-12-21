@@ -6,19 +6,24 @@ exports.postBreedHandler = async (request, response) => {
   try {
     const payload = request.body;
 
-    const payloadGalleries = payload.galleries.map((gallery, index) => ({
-      name: gallery.name,
-      image: request.files[index].filename,
-    }));
+    if (request.files.length > 0) {
+      const payloadGalleries = payload.galleries.map((gallery, index) => ({
+        name: gallery.name,
+        image: request.files[index].filename,
+      }));
 
-    const galleryIds = await galleriesService.addGalleries(payloadGalleries);
+      const galleryIds = await galleriesService.addGalleries(payloadGalleries);
 
-    const payloadBreed = {
-      ...payload,
-      galleries: galleryIds,
-    };
+      const payloadBreed = {
+        ...payload,
+        galleries: galleryIds,
+      };
 
-    await breedsService.addBreed(payloadBreed);
+      await breedsService.addBreed(payloadBreed);
+    } else {
+      delete payload.galleries;
+      await breedsService.addBreed(payload);
+    }
 
     response.status(201);
     return response.end();
