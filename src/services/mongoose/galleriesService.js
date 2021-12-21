@@ -18,18 +18,12 @@ exports.addGalleries = async (payloads) => {
 };
 
 exports.deleteGalleryById = async (id) => {
-  try {
-    const gallery = await Gallery.findOneAndDelete({ _id: id });
+  const gallery = await Gallery.findOneAndDelete({ _id: id });
 
-    const file = path.join(`public/uploads/breeds/${gallery.image}`);
+  const file = path.join(`public/uploads/breeds/${gallery.image}`);
 
-    if (fs.existsSync(file)) {
-      fs.unlinkSync(file);
-    }
-  } catch (error) {
-    if (error) {
-      throw new NotFoundError(`Gallery dengan id '${id}' tidak ditemukan`);
-    }
+  if (fs.existsSync(file)) {
+    fs.unlinkSync(file);
   }
 };
 
