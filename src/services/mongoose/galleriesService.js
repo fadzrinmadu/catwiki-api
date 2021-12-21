@@ -11,6 +11,12 @@ exports.addGallery = async (payload) => {
   return gallery._id;
 };
 
+exports.addGalleries = async (payloads) => {
+  const galleries = await Gallery.insertMany(payloads);
+  const galleryIds = galleries.map((gallery) => gallery._id);
+  return galleryIds;
+};
+
 exports.deleteGalleryById = async (id) => {
   try {
     const gallery = await Gallery.findOneAndDelete({ _id: id });
