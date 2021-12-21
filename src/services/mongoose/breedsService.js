@@ -17,22 +17,27 @@ exports.getBreeds = async (query) => {
 
   const breeds = await Breed
     .find({ name: { $regex: `${term}`, $options: 'i' } })
+    .populate({ path: 'galleries', select: '-__v' })
     .limit(limit ? parseInt(limit) : 0)
     .skip(startIndex)
-    .sort(`${top === 'true' ? '-count' : 'name'}`)
-    .select(`_id name ${top === 'true' && 'image'}`);
+    .sort(top === 'true' ? '-count' : 'name')
+    .select('_id name');
 
   if (term !== '' && breeds.length < 1) {
     throw new NotFoundError(`Breed dengan kata kunci '${term}' tidak ditemukan`);
   }
 
-  return breeds;
+  return breeds.map((breed) => ({
+    _id: breed._doc._id,
+    name: breed._doc.name,
+    image: `${baseUrl}/uploads/breeds/${breed._doc.galleries[0].image}`,
+  }));
 };
 
 exports.getBreedById = async (id) => {
   const breed = await Breed.findOne({ _id: id })
-    .select('-__v -count')
-    .populate({ path: 'galleries', select: '-__v' });
+    .populate({ path: 'galleries', select: '-__v' })
+    .select('-__v -count');
 
   return {
     ...breed._doc,
