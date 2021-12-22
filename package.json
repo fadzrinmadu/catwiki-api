@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./src/server.js",
     "start:dev": "nodemon ./src/server.js",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "seed": "node seeder.js"
   },
   "keywords": [],
   "author": "Muhammad Fadzrin Madu",
@@ -14,7 +15,8 @@
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mongoose": "^6.0.15",
+    "mongoose": "^5.10.11",
+    "mongoose-seed": "^0.6.0",
     "multer": "^1.4.4"
   },
   "devDependencies": {

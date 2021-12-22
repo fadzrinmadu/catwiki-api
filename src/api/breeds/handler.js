@@ -109,10 +109,10 @@ exports.putBreedByIdHandler = async (request, response) => {
     if (request.files.length > 0) {
       const breed = await breedsService.getBreedById(id);
 
-      // delete old galleries
-      breed.galleries.forEach(async (gallery) => {
-        await galleriesService.deleteGalleryById(gallery._id);
-      });
+      // // delete old galleries
+      // breed.galleries.forEach(async (gallery) => {
+      //   await galleriesService.deleteGalleryById(gallery._id);
+      // });
 
       const payloadGalleries = payload.galleries.map((gallery, index) => ({
         name: gallery.name,
@@ -123,7 +123,7 @@ exports.putBreedByIdHandler = async (request, response) => {
 
       const payloadBreed = {
         ...payload,
-        galleries: galleryIds,
+        galleries: [...breed.galleries, ...galleryIds],
       };
 
       await breedsService.editBreedById(id, payloadBreed);

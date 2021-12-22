@@ -27,11 +27,20 @@ exports.getBreeds = async (query) => {
     throw new NotFoundError(`Breed dengan kata kunci '${term}' tidak ditemukan`);
   }
 
-  return breeds.map((breed) => ({
-    _id: breed._doc._id,
-    name: breed._doc.name,
-    image: `${baseUrl}/uploads/breeds/${breed._doc.galleries[0].image}`,
-  }));
+  return breeds.map((breed) => {
+    if (breed._doc.galleries.length > 0) {
+      return {
+        _id: breed._doc._id,
+        name: breed._doc.name,
+        image: `${baseUrl}/uploads/breeds/${breed._doc.galleries[0].image}`,
+      }
+    }
+
+    return {
+      _id: breed._doc._id,
+      name: breed._doc.name,
+    }
+  });
 };
 
 exports.getBreedById = async (id) => {

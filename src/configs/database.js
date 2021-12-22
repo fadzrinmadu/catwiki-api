@@ -9,6 +9,7 @@ const uri = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.jubm8.mongodb.net/${
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false, //
 };
 
 mongoose.connect(uri, options);
