@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const Gallery = require('../../models/Gallery');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const cloudinary = require('../../utils/cloudinary');
 
 exports.addGallery = async (payload) => {
   const gallery = new Gallery(payload);
@@ -20,11 +21,16 @@ exports.addGalleries = async (payloads) => {
 exports.deleteGalleryById = async (id) => {
   const gallery = await Gallery.findOneAndDelete({ _id: id });
 
-  const file = path.join(`public/uploads/breeds/${gallery.image}`);
+  const filename = gallery.image.split('.')[0];
 
-  if (fs.existsSync(file)) {
-    fs.unlinkSync(file);
-  }
+  // delete image from cloudinary
+  await cloudinary.uploader.destroy(`catwiki/breeds/${filename}`);
+
+  // const file = path.join(`public/uploads/breeds/${gallery.image}`);
+
+  // if (fs.existsSync(file)) {
+  //   fs.unlinkSync(file);
+  // }
 };
 
 exports.findGalleryById = async (id) => {

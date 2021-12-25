@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Breed = require('../../models/Breed');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { baseUrl } = require('../../configs/server');
+const { fileUploadedUrl } = require('../../configs/server');
 
 exports.addBreed = async (payload) => {
   const breed = new Breed(payload);
@@ -32,14 +32,14 @@ exports.getBreeds = async (query) => {
       return {
         _id: breed._doc._id,
         name: breed._doc.name,
-        image: `${baseUrl}/uploads/breeds/${breed._doc.galleries[0].image}`,
-      }
+        image: `${fileUploadedUrl}/${breed._doc.galleries[0].image}`,
+      };
     }
 
     return {
       _id: breed._doc._id,
       name: breed._doc.name,
-    }
+    };
   });
 };
 
@@ -53,7 +53,7 @@ exports.getBreedById = async (id) => {
     galleries: breed._doc.galleries.map((gallery) => ({
       _id: gallery._id,
       name: gallery.name,
-      image: `${baseUrl}/uploads/breeds/${gallery.image}`,
+      image: `${fileUploadedUrl}/${gallery.image}`,
     })),
   };
 };

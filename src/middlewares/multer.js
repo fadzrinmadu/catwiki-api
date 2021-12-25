@@ -12,7 +12,7 @@ const uploadSingleBreed = multer({
 
 const uploadMultipleBreed = multer({
   storage: multer.diskStorage({
-    destination: 'public/uploads/breeds',
+    destination: null,
     filename: (request, file, callback) => {
       callback(null, `breed-${Date.now()}${path.extname(file.originalname)}`);
     },

@@ -1,3 +1,4 @@
+const cloudinary = require('../../utils/cloudinary');
 const breedsService = require('../../services/mongoose/breedsService');
 const galleriesService = require('../../services/mongoose/galleriesService');
 const ClientError = require('../../exceptions/ClientError');
@@ -7,6 +8,15 @@ exports.postBreedHandler = async (request, response) => {
     const payload = request.body;
 
     if (request.files.length > 0) {
+      // upload image to cloudinary
+      request.files.map(async (file) => {
+        await cloudinary.uploader.upload(file.path, {
+          folder: 'catwiki/breeds',
+          use_filename: true,
+          unique_filename: false,
+        });
+      });
+
       const payloadGalleries = payload.galleries.map((gallery, index) => ({
         name: gallery.name,
         image: request.files[index].filename,
@@ -107,6 +117,15 @@ exports.putBreedByIdHandler = async (request, response) => {
     await breedsService.findBreedById(id);
 
     if (request.files.length > 0) {
+      // upload image to cloudinary
+      request.files.map(async (file) => {
+        await cloudinary.uploader.upload(file.path, {
+          folder: 'catwiki/breeds',
+          use_filename: true,
+          unique_filename: false,
+        });
+      });
+
       const breed = await breedsService.getBreedById(id);
 
       // // delete old galleries
