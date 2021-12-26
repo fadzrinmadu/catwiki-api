@@ -50,11 +50,14 @@ exports.getBreedById = async (id) => {
 
   return {
     ...breed._doc,
-    galleries: breed._doc.galleries.map((gallery) => ({
-      _id: gallery._id,
-      name: gallery.name,
-      image: `${fileUploadedUrl}/${gallery.image}`,
-    })),
+    image: `${fileUploadedUrl}/${breed._doc.galleries[0].image}`,
+    galleries: breed._doc.galleries
+      .filter((gallery, index) => index !== 0)
+      .map((gallery) => ({
+        _id: gallery._id,
+        name: gallery.name,
+        image: `${fileUploadedUrl}/${gallery.image}`,
+      })),
   };
 };
 
