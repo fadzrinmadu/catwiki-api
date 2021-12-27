@@ -1,3 +1,4 @@
+const Breed = require('../../models/Breed');
 const cloudinary = require('../../utils/cloudinary');
 const breedsService = require('../../services/mongoose/breedsService');
 const galleriesService = require('../../services/mongoose/galleriesService');
@@ -126,7 +127,7 @@ exports.putBreedByIdHandler = async (request, response) => {
         });
       });
 
-      const breed = await breedsService.getBreedById(id);
+      await breedsService.findBreedById(id);
 
       // // delete old galleries
       // breed.galleries.forEach(async (gallery) => {
@@ -139,10 +140,11 @@ exports.putBreedByIdHandler = async (request, response) => {
       }));
 
       const galleryIds = await galleriesService.addGalleries(payloadGalleries);
+      const breed = await Breed.findOne({ _id: id });
 
       const payloadBreed = {
         ...payload,
-        galleries: [...breed.galleries, ...galleryIds],
+        galleries: [...breed.galleries.map((gallery) => gallery._id), ...galleryIds],
       };
 
       await breedsService.editBreedById(id, payloadBreed);
