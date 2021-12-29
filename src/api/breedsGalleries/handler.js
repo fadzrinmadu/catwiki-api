@@ -1,8 +1,7 @@
 const breedsService = require('../../services/mongoose/breedsService');
 const galleriesService = require('../../services/mongoose/galleriesService');
-const ClientError = require('../../exceptions/ClientError');
 
-exports.deleteBreedGalleryHandler = async (request, response) => {
+exports.deleteBreedGalleryHandler = async (request, response, next) => {
   try {
     const { breedId, galleryId } = request.params;
 
@@ -15,16 +14,6 @@ exports.deleteBreedGalleryHandler = async (request, response) => {
     response.status(204);
     return response.end();
   } catch (error) {
-    if (error instanceof ClientError) {
-      response.status(error.statusCode);
-      return response.json({
-        errorMessages: error.message,
-      });
-    }
-
-    // SERVER ERROR
-    console.log(error);
-    response.status(500);
-    return response.end();
+    return next(error);
   }
 };
