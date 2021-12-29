@@ -21,7 +21,7 @@ exports.getBreeds = async (query) => {
     .limit(limit ? parseInt(limit) : 0)
     .skip(startIndex)
     .sort(top === 'true' ? '-count' : 'name')
-    .select('_id name');
+    .select(`_id name ${top === 'true' && 'description'}`);
 
   if (term !== '' && breeds.length < 1) {
     throw new NotFoundError(`Breed dengan kata kunci '${term}' tidak ditemukan`);
@@ -32,6 +32,7 @@ exports.getBreeds = async (query) => {
       return {
         _id: breed._doc._id,
         name: breed._doc.name,
+        description: breed._doc.description,
         image: `${fileUploadedUrl}/${breed._doc.galleries[0].image}`,
       };
     }
