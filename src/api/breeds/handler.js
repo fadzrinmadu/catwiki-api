@@ -2,9 +2,8 @@ const Breed = require('../../models/Breed');
 const cloudinary = require('../../utils/cloudinary');
 const breedsService = require('../../services/mongoose/breedsService');
 const galleriesService = require('../../services/mongoose/galleriesService');
-const ClientError = require('../../exceptions/ClientError');
 
-exports.postBreedHandler = async (request, response) => {
+exports.postBreedHandler = async (request, response, next) => {
   try {
     const payload = request.body;
 
@@ -39,28 +38,11 @@ exports.postBreedHandler = async (request, response) => {
     response.status(201);
     return response.end();
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      const errorMessages = [];
-
-      Object.values(error.errors).forEach(({ properties }) => {
-        errorMessages.push({
-          field: properties.path,
-          message: properties.message,
-        });
-      });
-
-      response.status(400);
-      return response.json({ errorMessages });
-    }
-
-    // SERVER ERROR
-    console.log(error);
-    response.status(500);
-    return response.end();
+    return next(error);
   }
 };
 
-exports.getBreedsHandler = async (request, response) => {
+exports.getBreedsHandler = async (request, response, next) => {
   try {
     const { query } = request;
     const breeds = await breedsService.getBreeds(query);
@@ -72,21 +54,11 @@ exports.getBreedsHandler = async (request, response) => {
       results: breeds,
     });
   } catch (error) {
-    if (error instanceof ClientError) {
-      response.status(error.statusCode);
-      return response.json({
-        errorMessages: error.message,
-      });
-    }
-
-    // SERVER ERROR
-    console.log(error);
-    response.status(500);
-    return response.end();
+    return next(error);
   }
 };
 
-exports.getBreedByIdHandler = async (request, response) => {
+exports.getBreedByIdHandler = async (request, response, next) => {
   try {
     const { id } = request.params;
 
@@ -96,21 +68,11 @@ exports.getBreedByIdHandler = async (request, response) => {
     response.status(200);
     return response.json(breed);
   } catch (error) {
-    if (error instanceof ClientError) {
-      response.status(error.statusCode);
-      return response.json({
-        errorMessages: error.message,
-      });
-    }
-
-    // SERVER ERROR
-    console.log(error);
-    response.status(500);
-    return response.end();
+    return next(error);
   }
 };
 
-exports.putBreedByIdHandler = async (request, response) => {
+exports.putBreedByIdHandler = async (request, response, next) => {
   try {
     const { id } = request.params;
     const payload = request.body;
@@ -156,35 +118,11 @@ exports.putBreedByIdHandler = async (request, response) => {
     response.status(204);
     return response.end();
   } catch (error) {
-    if (error instanceof ClientError) {
-      response.status(error.statusCode);
-      return response.json({
-        errorMessages: error.message,
-      });
-    }
-
-    if (error.name === 'ValidationError') {
-      const errorMessages = [];
-
-      Object.values(error.errors).forEach(({ properties }) => {
-        errorMessages.push({
-          field: properties.path,
-          message: properties.message,
-        });
-      });
-
-      response.status(400);
-      return response.json({ errorMessages });
-    }
-
-    // SERVER ERROR
-    console.log(error);
-    response.status(500);
-    return response.end();
+    return next(error);
   }
 };
 
-exports.deleteBreedByIdHandler = async (request, response) => {
+exports.deleteBreedByIdHandler = async (request, response, next) => {
   try {
     const { id } = request.params;
 
@@ -202,16 +140,6 @@ exports.deleteBreedByIdHandler = async (request, response) => {
     response.status(204);
     return response.end();
   } catch (error) {
-    if (error instanceof ClientError) {
-      response.status(error.statusCode);
-      return response.json({
-        errorMessages: error.message,
-      });
-    }
-
-    // SERVER ERROR
-    console.log(error);
-    response.status(500);
-    return response.end();
+    return next(error);
   }
 };
